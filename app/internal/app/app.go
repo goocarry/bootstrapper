@@ -12,10 +12,10 @@ import (
 	"time"
 
 	// for swagger
-	// _ "github.com/goocarry/bootstrapper/docs"
-	"github.com/goocarry/bootstrapper/internal/config"
-	"github.com/goocarry/bootstrapper/pkg/logger"
-	"github.com/goocarry/bootstrapper/pkg/metric"
+	_ "github.com/goocarry/bootstrapper/app/docs"
+	"github.com/goocarry/bootstrapper/app/internal/config"
+	"github.com/goocarry/bootstrapper/app/pkg/logger"
+	"github.com/goocarry/bootstrapper/app/pkg/metric"
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/cors"
 	httpSwagger "github.com/swaggo/http-swagger"

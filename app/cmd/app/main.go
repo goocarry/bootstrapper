@@ -3,9 +3,9 @@ package main
 import (
 	"log"
 
-	"github.com/goocarry/bootstrapper/internal/app"
-	"github.com/goocarry/bootstrapper/internal/config"
-	"github.com/goocarry/bootstrapper/pkg/logger"
+	"github.com/goocarry/bootstrapper/app/internal/app"
+	"github.com/goocarry/bootstrapper/app/internal/config"
+	"github.com/goocarry/bootstrapper/app/pkg/logger"
 )
 
 func main() {
