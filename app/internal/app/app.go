@@ -4,6 +4,7 @@ import (
 	"context"
 	"errors"
 	"fmt"
+	"log"
 	"net"
 	"net/http"
 	"os"
@@ -14,8 +15,10 @@ import (
 	// for swagger
 	_ "github.com/goocarry/bootstrapper/app/docs"
 	"github.com/goocarry/bootstrapper/app/internal/config"
+	"github.com/goocarry/bootstrapper/app/pkg/client/postgresql"
 	"github.com/goocarry/bootstrapper/app/pkg/logger"
 	"github.com/goocarry/bootstrapper/app/pkg/metric"
+	"github.com/jackc/pgx/v4/pgxpool"
 	"github.com/julienschmidt/httprouter"
 	"github.com/rs/cors"
 	httpSwagger "github.com/swaggo/http-swagger"
@@ -27,6 +30,7 @@ type App struct {
 	logger     *logger.Logger
 	router     *httprouter.Router
 	httpServer *http.Server
+	pgClient   *pgxpool.Pool
 }
 
 // NewApp ...
@@ -42,10 +46,18 @@ func NewApp(config *config.Config, logger *logger.Logger) (App, error) {
 	metricHandler := metric.Handler{}
 	metricHandler.Register(router)
 
+	logger.Println("creating pg conifg")
+	pgConfig := postgresql.NewPgConfig(config.PostgreSQL.Username, config.PostgreSQL.Password, config.PostgreSQL.Host, config.PostgreSQL.Port, config.PostgreSQL.Database)
+	pgClient, err := postgresql.NewClient(context.Background(), 5, 5*time.Second, pgConfig)
+	if err != nil {
+		log.Fatalf("error during config initialization")
+	}
+
 	return App{
-		cfg:    config,
-		logger: logger,
-		router: router,
+		cfg:      config,
+		logger:   logger,
+		router:   router,
+		pgClient: pgClient,
 	}, nil
 }
 

@@ -6,7 +6,6 @@ import (
 	"log"
 	"time"
 
-	"github.com/goocarry/bootstrapper/app/internal/config"
 	"github.com/jackc/pgconn"
 	"github.com/jackc/pgx"
 	"github.com/jackc/pgx/v4/pgxpool"
@@ -22,9 +21,29 @@ type Client interface {
 	Exec(ctx context.Context, sql string, arguments ...interface{}) (pgconn.CommandTag, error)
 }
 
+// PgConfig ...
+type PgConfig struct {
+	Username string
+	Password string
+	Host     string
+	Port     string
+	Database string
+}
+
+// NewPgConfig creates new pg config instance
+func NewPgConfig(username string, password string, host string, port string, database string) *PgConfig {
+	return &PgConfig{
+		Username: username,
+		Password: password,
+		Host:     host,
+		Port:     port,
+		Database: database,
+	}
+}
+
 // NewClient ...
-func NewClient(ctx context.Context, maxAttempts int, maxDelay time.Duration, cfg *config.Config) (pool *pgxpool.Pool, err error) {
-	dsn := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", cfg.PostgreSQL.Username, cfg.PostgreSQL.Password, cfg.PostgreSQL.Host, cfg.PostgreSQL.Port, cfg.PostgreSQL.Database)
+func NewClient(ctx context.Context, maxAttempts int, maxDelay time.Duration, cfg *PgConfig) (pool *pgxpool.Pool, err error) {
+	dsn := fmt.Sprintf("postgresql://%s:%s@%s:%s/%s", cfg.Username, cfg.Password, cfg.Host, cfg.Port, cfg.Database)
 
 	err = DoWithAttempts(func() error {
 		ctx, cancel := context.WithTimeout(ctx, 5*time.Second)
